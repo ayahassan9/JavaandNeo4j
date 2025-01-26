@@ -3,78 +3,74 @@ package employe.management.system;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
 
-public class Splash extends JFrame implements ActionListener {
-
-    Splash() {
-        // Configurer la fenêtre
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setUndecorated(true);
-        getContentPane().setBackground(new Color(245, 245, 245)); // Couleur d'arrière-plan claire
-
-        // Créer le conteneur principal
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Ajouter des marges
-        mainPanel.setBackground(new Color(245, 245, 245));
-
-        // Ajouter l'en-tête
-        JLabel heading = new JLabel("EMPLOYEE MANAGEMENT SYSTEM", JLabel.CENTER);
-        heading.setFont(new Font("SansSerif", Font.BOLD, 50));
-        heading.setForeground(new Color(34, 34, 34)); // Gris foncé
-        mainPanel.add(heading, BorderLayout.NORTH);
-
-        // Ajouter une image
-        JLabel imageLabel = new JLabel();
-        imageLabel.setHorizontalAlignment(JLabel.CENTER);
-        mainPanel.add(imageLabel, BorderLayout.CENTER);
-
-        // Ajouter un bouton
-        JButton clickHere = new JButton("CLICK HERE TO CONTINUE");
-        clickHere.setFont(new Font("Arial", Font.BOLD, 20));
-        clickHere.setBackground(new Color(34, 139, 34)); // Vert
-        clickHere.setForeground(Color.WHITE);
-        clickHere.setFocusPainted(false);
-        clickHere.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        clickHere.addActionListener(this);
-
-        // Conteneur pour centrer le bouton
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(new Color(245, 245, 245));
-        buttonPanel.add(clickHere);
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-
-        // Ajouter le conteneur principal à la fenêtre
-        add(mainPanel);
-
-        // Afficher la fenêtre
+public class Login extends JFrame implements ActionListener{
+    
+    JTextField tfusername, tfpassword;
+    
+    Login() {
+        
+        getContentPane().setBackground(Color.WHITE);
+        setLayout(null);
+        
+        JLabel lblusername = new JLabel("Username");
+        lblusername.setBounds(40, 20, 100, 30);
+        add(lblusername);
+        
+        tfusername = new JTextField();
+        tfusername.setBounds(150, 20, 150, 30);
+        add(tfusername);
+        
+        JLabel lblpassword = new JLabel("Password");
+        lblpassword.setBounds(40, 70, 100, 30);
+        add(lblpassword);
+        
+        tfpassword = new JTextField();
+        tfpassword.setBounds(150, 70, 150, 30);
+        add(tfpassword);
+        
+        JButton login = new JButton("LOGIN");
+        login.setBounds(150, 140, 150, 30);
+        login.setBackground(Color.BLACK);
+        login.setForeground(Color.WHITE);
+        login.addActionListener(this);
+        add(login);
+        
+        ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icons/Ooo.jpg"));
+        Image i2 = i1.getImage().getScaledInstance(200, 200, Image.SCALE_DEFAULT);
+        ImageIcon i3 = new ImageIcon(i2);
+        JLabel image = new JLabel(i3);
+        image.setBounds(350, 0, 200, 200);
+        add(image);
+        
+        setSize(600, 300);
+        setLocation(450, 200);
         setVisible(true);
-
-        // Charger et redimensionner l'image après que la fenêtre soit rendue
-        loadImage(imageLabel);
     }
-
-    // Méthode pour charger et redimensionner l'image
-    private void loadImage(JLabel imageLabel) {
+    
+    public void actionPerformed(ActionEvent ae) {
         try {
-            ImageIcon icon = new ImageIcon(getClass().getResource("/icons/gestion.jpg"));
-            Image image = icon.getImage().getScaledInstance(getWidth() - 100, getHeight() - 200, Image.SCALE_SMOOTH);
-            ImageIcon scaledIcon = new ImageIcon(image);
-            imageLabel.setIcon(scaledIcon);
+            String username = tfusername.getText();
+            String password = tfpassword.getText();
+            
+            Conn c = new Conn();
+            String query = "select * from user where nom = '"+username+"' and mot_de_passe = '"+password+"'";
+            
+            ResultSet rs = c.s.executeQuery(query);
+            if (rs.next()) {
+                setVisible(false);
+                new Home();
+            } else {
+                JOptionPane.showMessageDialog(null, "Invalid username or password");
+                setVisible(false);
+            }
         } catch (Exception e) {
-            System.out.println("Erreur : Impossible de charger l'image.");
             e.printStackTrace();
         }
     }
-
-    // ActionListener pour le bouton
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-        new Login();
-    }
-
-    // Point d'entrée principal
+    
     public static void main(String[] args) {
-        new Splash();
+        new Login();
     }
 }
